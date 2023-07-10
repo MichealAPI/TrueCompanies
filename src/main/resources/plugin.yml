@@ -1,0 +1,4 @@
+name: TrueCompanies
+version: '${project.version}'
+main: it.mikeslab.truecompanies.TrueCompanies
+api-version: 1.16
