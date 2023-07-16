@@ -1,0 +1,14 @@
+it\mikeslab\truecompanies\TrueCompanies.class
+it\mikeslab\truecompanies\util\format\Translator.class
+it\mikeslab\truecompanies\util\database\handler\MySQLAccess.class
+it\mikeslab\truecompanies\util\database\DatabaseType.class
+it\mikeslab\truecompanies\util\language\RecognizedLanguages.class
+it\mikeslab\truecompanies\util\database\handler\MongoDBAccess.class
+it\mikeslab\truecompanies\util\database\handler\CompanyCache.class
+it\mikeslab\truecompanies\util\stacktrace\SentryDiagnostic.class
+it\mikeslab\truecompanies\TrueCompanies$1.class
+it\mikeslab\truecompanies\object\Company$CompanyBuilder.class
+it\mikeslab\truecompanies\object\Company.class
+it\mikeslab\truecompanies\util\language\Language.class
+it\mikeslab\truecompanies\util\database\handler\Database.class
+it\mikeslab\truecompanies\util\language\LangKey.class

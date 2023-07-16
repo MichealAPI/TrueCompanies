@@ -2,12 +2,15 @@ package it.mikeslab.truecompanies;
 
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import it.mikeslab.truecompanies.util.database.DatabaseType;
 import it.mikeslab.truecompanies.util.database.handler.CompanyCache;
 import it.mikeslab.truecompanies.util.database.handler.Database;
-import it.mikeslab.truecompanies.util.database.handler.MongoDBAccess;
-import it.mikeslab.truecompanies.util.database.handler.MySQLAccess;
+import it.mikeslab.truecompanies.util.database.handler.JSONDatabase;
+import it.mikeslab.truecompanies.util.database.handler.MySQLDatabase;
 import it.mikeslab.truecompanies.util.language.Language;
+import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,9 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TrueCompanies extends JavaPlugin {
 
     @Getter private static TrueCompanies instance;
+    private ProtocolManager protocolManager;
     private Database database;
     private CompanyCache companyCache;
-
 
 
     @Override
@@ -26,15 +29,23 @@ public class TrueCompanies extends JavaPlugin {
         saveDefaultConfig();
         instance = this;
 
+        if(getConfig().getBoolean("send-stacktraces-to-sentry")) {
+            SentryDiagnostic.initSentry();
+        }
+
         setupLanguages();
         setupCommandFramework();
 
         setupDatabase();
+        database.connect();
+
+        if (isProtocolLibEnabled())
+            protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     @Override
     public void onDisable() {
-
+        database.disconnect();
     }
 
 
@@ -56,12 +67,8 @@ public class TrueCompanies extends JavaPlugin {
 
 
         switch (requestedDatabase) {
-            case MONGO:
-                database = new MongoDBAccess();
-                break;
-            case MYSQL:
-                database = new MySQLAccess();
-                break;
+            case JSON -> database = new JSONDatabase();
+            case MYSQL -> database = new MySQLDatabase();
         }
 
         database.connect();
@@ -73,4 +80,8 @@ public class TrueCompanies extends JavaPlugin {
         this.companyCache = new CompanyCache();
     }
 
+
+    public boolean isProtocolLibEnabled() {
+        return getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+    }
 }
