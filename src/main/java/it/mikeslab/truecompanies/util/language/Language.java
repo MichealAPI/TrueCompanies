@@ -20,6 +20,8 @@ package it.mikeslab.truecompanies.util.language;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
+import it.mikeslab.truecompanies.util.format.ChatColor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,6 +29,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -82,12 +85,23 @@ public class Language {
     public static String getString(LangKey langKey) {
         try {
             // Try to get the language string from the cache. If it's not there, load it from the language file and add it to the cache.
-            return cache.get(langKey, key -> loadString(langKey));
+            String value = cache.get(langKey, key -> loadString(langKey));
+            String prefix = cache.get(LangKey.PREFIX, key -> loadString(LangKey.PREFIX));
+
+            return ChatColor.color(prefix + value);
         } catch (Exception e) {
             // If an exception occurs while loading the language string, log a warning and return the default value.
             plugin.getLogger().log(Level.WARNING, "Error while getting language string for key " + langKey, e);
             return langKey.getDefaultValue();
         }
+    }
+
+    public static String getString(LangKey langKey, Map<String, String> replacements) {
+        String value = getString(langKey);
+        for (Map.Entry<String, String> replacement : replacements.entrySet()) {
+            value = value.replace(replacement.getKey(), replacement.getValue());
+        }
+        return value;
     }
 
     /**
@@ -105,7 +119,7 @@ public class Language {
         }
 
         // Return the language string for the specified key, or the default value if it's not found.
-        return languageFile.getString(parsedKey, langKey.getDefaultValue()); //remove LegacyTranslate to avoid using MiniMessage.
+        return languageFile.getString(parsedKey, langKey.getDefaultValue());
     }
 
     /**
@@ -170,6 +184,8 @@ public class Language {
         } catch (IllegalArgumentException e) {
             // If an exception occurs while generating the language file, log a warning.
             plugin.getLogger().log(Level.WARNING, "Error while generating language file for language " + language, e);
+
+            SentryDiagnostic.capture(e);
         }
     }
 

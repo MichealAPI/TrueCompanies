@@ -60,8 +60,22 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum LangKey {
-
-    EXAMPLE("example");
+    PREFIX("&c&lTrueCompanies &8» &r"),
+    CONFIRM_MENU("Confirm Menu"),
+    CONFIRM("&aConfirm"),
+    CANCEL("&cCancel"),
+    FIRED_SUCCESSFULLY("&a{player} has been fired successfully fired from {company}"),
+    YOU_ARE_NOT_IN_A_COMPANY("&cYou are not in a company"),
+    YOU_DO_NOT_HAVE_PERMISSION("&cYou do not have permission to do this"),
+    TARGET_NOT_EMPLOYED("&c{player} is not employed at {company}"),
+    SUBJECT_NOT_EMPLOYED("&cYou are not employed at {company}"),
+    COMPANY_NOT_FOUND("&cCompany '&6{companyID}'&c not found!"),
+    CLICK_TO_SELECT("&aClick to select"),
+    NEXT_PAGE("&aNext Page"),
+    PREVIOUS_PAGE("&aPrevious Page"),
+    SEARCH("&6Search"),
+    SEARCH_LORE("&8(Right-Click) &7to search for a company"),
+    ENTER_QUERY("Enter a query"),;
 
     private final String defaultValue;
 

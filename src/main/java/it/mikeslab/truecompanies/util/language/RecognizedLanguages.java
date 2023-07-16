@@ -18,44 +18,16 @@
 
 package it.mikeslab.truecompanies.util.language;
 
-import java.util.Arrays;
-
 /**
  * The enum Recognized languages.
  */
 public enum RecognizedLanguages {
-    /**
-     * En us recognized languages.
-     */
+
     en_US,
-    /**
-     * It it recognized languages.
-     */
     it_IT,
-    /**
-     * Es es recognized languages.
-     */
     es_ES,
-    /**
-     * Fr fr recognized languages.
-     */
     fr_FR;
 
-    /**
-     * Get languages string [ ].
-     *
-     * @return the string [ ]
-     */
-    public static String[] getLanguages() {
-        return Arrays.stream(RecognizedLanguages.values()).map(Enum::name).toArray(String[]::new);
-    }
-
-    /**
-     * Is recognized language boolean.
-     *
-     * @param language the language
-     * @return the boolean
-     */
     public static boolean isRecognizedLanguage(String language) {
         for(RecognizedLanguages recognizedLanguage : RecognizedLanguages.values()) {
             if(recognizedLanguage.name().equals(language)) {

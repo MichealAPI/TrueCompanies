@@ -1,13 +1,10 @@
 language: en_US
+send-stacktraces-to-sentry: true
 database:
-  type: MYSQL
-  mongodb:
-    connection-string: mongodb+srv://<user>:<password>@<host>/?retryWrites=true&w=majority
-    database: Company
-    collection: companies
+  type: MYSQL # MYSQL, JSON
   mysql:
     host: localhost
     port: 3306
-    database: Company
+    database: TrueCompanies
     username: root
     password: ''

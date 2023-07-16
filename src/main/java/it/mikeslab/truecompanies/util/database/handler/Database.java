@@ -12,7 +12,5 @@ public interface Database {
     void updateCompany(Company company);
     void createCompany(Company company);
     void saveCompanies(List<Company> companies);
-
-    Company retrieveCompany(int id);
-    Company[] retrieveCompanies();
+    List<Company> retrieveCompanies();
 }
