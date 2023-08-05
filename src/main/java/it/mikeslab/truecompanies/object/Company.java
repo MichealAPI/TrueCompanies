@@ -1,35 +1,32 @@
 package it.mikeslab.truecompanies.object;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class Company {
-    private int id;
-    private final String name;
-    private final UUID ownerUUID;
-    private List<Employee> employees;
+
+    private String id;
+    private String displayName;
+    private String description;
+
     private int balance;
+    private Map<Integer, Group> groups;
+    private Map<String, Integer> employees;
+    private String chatFormat;
 
-    // internal
-    private List<UUID> firedEmployees;
-
-    public void fireEmployee(UUID employeeUUID) {
-        List<Employee> updatedEmployees = employees;
-
-        for(Employee employee : employees) {
-            if(employee.getPlayerUUID().equals(employeeUUID)) {
-                updatedEmployees.remove(employee);
+    public String getOwner() {
+        for(Map.Entry<String, Integer> employeeEntry : employees.entrySet()) {
+            System.out.println(employeeEntry.getKey() + " " + employeeEntry.getValue());
+            if(employeeEntry.getValue() == 1) {
+                return employeeEntry.getKey();
             }
         }
-
-        this.employees = updatedEmployees;
-
-        firedEmployees.add(employeeUUID);
+        System.out.println("No owner found for company " + id);
+        return null;
     }
 
 }

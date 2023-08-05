@@ -1,0 +1,17 @@
+displayName: Example Company
+description: Best Company in the World
+balance: 5000
+chatFormat: '&7[&6{group}&7] &r{name}&7: &r{message}'
+groups:
+  '1':
+    tag: 'Owner'
+    permissions:
+      can-hire: true
+      can-fire: true
+      can-deposit: true
+      can-withdraw: true
+      can-promote: true
+      can-demote: true
+data:
+  'Drago903':
+    role: '1'

@@ -1,6 +1,4 @@
 name: TrueCompanies
 version: '${project.version}'
 main: it.mikeslab.truecompanies.TrueCompanies
-api-version: 1.16
-softdepend:
-  - ProtocolLib
+api-version: 1.20

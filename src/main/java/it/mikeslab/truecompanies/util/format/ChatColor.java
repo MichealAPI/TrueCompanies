@@ -2,6 +2,8 @@ package it.mikeslab.truecompanies.util.format;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
+
 @UtilityClass
 public class ChatColor {
 
@@ -20,7 +22,6 @@ public class ChatColor {
 
         for (int i = 0; i < texts.length; i++){
             if (texts[i].equalsIgnoreCase("&")){
-                //get the next string
                 i++;
                 if (texts[i].charAt(0) == '#'){
                     finalText.append(net.md_5.bungee.api.ChatColor.of(texts[i].substring(0, 7)) + texts[i].substring(7));
@@ -33,6 +34,11 @@ public class ChatColor {
         }
 
         return finalText.toString();
+    }
+
+
+    public static String[] color(List<String> lines) {
+        return lines.stream().map(ChatColor::color).toArray(String[]::new);
     }
 
 }

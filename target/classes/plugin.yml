@@ -1,4 +1,4 @@
 name: TrueCompanies
 version: '1.0-SNAPSHOT'
 main: it.mikeslab.truecompanies.TrueCompanies
-api-version: 1.16
+api-version: 1.20

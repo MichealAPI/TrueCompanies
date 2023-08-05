@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 public class SentryDiagnostic {
     private final static String DSN = "https://5909fed2602f49cf805a3cac34a88086@o4504045887029248.ingest.sentry.io/4505538530705408";
     private static boolean initialized;
+
     public static void initSentry() {
         Sentry.init(options -> {
             options.setDsn(DSN);
