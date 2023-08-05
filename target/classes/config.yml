@@ -1,13 +1,1 @@
 language: en_US
-database:
-  type: MYSQL
-  mongodb:
-    connection-string: mongodb+srv://<user>:<password>@<host>/?retryWrites=true&w=majority
-    database: Company
-    collection: companies
-  mysql:
-    host: localhost
-    port: 3306
-    database: Company
-    username: root
-    password: ''

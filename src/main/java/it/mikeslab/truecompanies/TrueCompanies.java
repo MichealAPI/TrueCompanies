@@ -1,87 +1,105 @@
 package it.mikeslab.truecompanies;
 
 import co.aikar.commands.BukkitCommandManager;
-import co.aikar.commands.MessageType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import it.mikeslab.truecompanies.util.database.DatabaseType;
-import it.mikeslab.truecompanies.util.database.handler.CompanyCache;
-import it.mikeslab.truecompanies.util.database.handler.Database;
-import it.mikeslab.truecompanies.util.database.handler.JSONDatabase;
-import it.mikeslab.truecompanies.util.database.handler.MySQLDatabase;
+import it.mikeslab.truecompanies.command.CompanyCommand;
+import it.mikeslab.truecompanies.command.subcommand.*;
+import it.mikeslab.truecompanies.listener.ChatListener;
+import it.mikeslab.truecompanies.loader.CompanyLoader;
+import it.mikeslab.truecompanies.loader.CompanyUtils;
 import it.mikeslab.truecompanies.util.language.Language;
-import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import lombok.Getter;
-import org.bukkit.ChatColor;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 @Getter
-public class TrueCompanies extends JavaPlugin {
+public final class TrueCompanies extends JavaPlugin {
 
-    @Getter private static TrueCompanies instance;
-    private ProtocolManager protocolManager;
-    private Database database;
-    private CompanyCache companyCache;
+    @Getter private static Economy econ = null;
 
+    private FileConfiguration menuConfiguration;
+    private CompanyLoader companyLoader;
+    private CompanyUtils companyUtils;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-        instance = this;
 
-        if(getConfig().getBoolean("send-stacktraces-to-sentry")) {
-            SentryDiagnostic.initSentry();
+        if (!setupEconomy() ) {
+            Bukkit.getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
-        setupLanguages();
-        setupCommandFramework();
+        this.loadConfigurationFiles();
+        this.loadListeners();
+        this.registerCommands();
 
-        setupDatabase();
-        database.connect();
-
-        if (isProtocolLibEnabled())
-            protocolManager = ProtocolLibrary.getProtocolManager();
+        this.loadCompanies();
     }
 
     @Override
     public void onDisable() {
-        database.disconnect();
+
+        // todo: unloading something? or maybe just saiving companies
+
+
     }
 
+    private void loadConfigurationFiles() {
+        saveDefaultConfig();
 
-    private void setupCommandFramework() {
+        Language.initialize(this, getConfig().getString("language"));
+
+        // Inventories Language
+        String inventoryLangPath = "inventories.yml";
+        File inventoryLangFile = new File(getDataFolder(), inventoryLangPath);
+        Language.generateFile(inventoryLangFile, "inventories.yml");
+
+        this.menuConfiguration = YamlConfiguration.loadConfiguration(inventoryLangFile);
+    }
+
+    private void loadListeners() {
+        this.getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+    }
+
+    private void registerCommands() {
         BukkitCommandManager commandManager = new BukkitCommandManager(this);
-        //commandManager.registerCommand(new CmdATM());
+
+        // Main command
+        commandManager.registerCommand(new CompanyCommand());
+
+        // Subs
+        commandManager.registerCommand(new SubCompanyHire(this));
+        commandManager.registerCommand(new SubCompanyFire(this));
+        commandManager.registerCommand(new SubCompanyBalance(this));
+        commandManager.registerCommand(new SubCompanyManage(this));
+        commandManager.registerCommand(new SubCompanyChat(this));
+        commandManager.registerCommand(new SubCompanyPerms(this));
 
         commandManager.enableUnstableAPI("help");
-        commandManager.setFormat(MessageType.HELP, ChatColor.GREEN, ChatColor.GOLD);
     }
 
+    private void loadCompanies() {
+        this.companyLoader = new CompanyLoader(this.getDataFolder());
+        this.companyLoader.loadAllCompanies();
 
-    private void setupLanguages() {
-        Language.initialize(this, getConfig().getString("language"));
+        this.companyUtils = new CompanyUtils(companyLoader);
     }
 
-    private void setupDatabase() {
-        DatabaseType requestedDatabase = DatabaseType.valueOf(getConfig().getString("database.type"));
-
-
-        switch (requestedDatabase) {
-            case JSON -> database = new JSONDatabase();
-            case MYSQL -> database = new MySQLDatabase();
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
         }
-
-        database.connect();
-
-        loadCache();
-    }
-
-    private void loadCache() {
-        this.companyCache = new CompanyCache();
-    }
-
-
-    public boolean isProtocolLibEnabled() {
-        return getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
     }
 }
