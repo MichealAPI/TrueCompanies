@@ -4,9 +4,10 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.Syntax;
 import it.mikeslab.truecompanies.Perms;
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.loader.CompanyUtils;
+import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.menu.selector.CompanySelectorMenu;
 import it.mikeslab.truecompanies.object.Company;
 import it.mikeslab.truecompanies.object.Group;
@@ -17,13 +18,14 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-@CommandAlias("company")
+@CommandAlias("azienda|company")
 @RequiredArgsConstructor
 public class SubCompanyBalance extends BaseCommand {
 
     private final TrueCompanies instance;
 
-    @Subcommand("deposit")
+    @Subcommand("deposita|deposit")
+    @Syntax("<amount>")
     @Description("Deposit money into a company's balance")
     public void onDepositCommand(Player player, int amount) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
@@ -49,7 +51,7 @@ public class SubCompanyBalance extends BaseCommand {
 
 
             CompanyUtils companyUtils = instance.getCompanyUtils();
-            companyUtils.updateBalance(company.getId(), amount);
+            companyUtils.updateBalance(company, amount);
             TrueCompanies.getEcon().withdrawPlayer(player, amount); // Assuming this method exists
             player.sendMessage(Language.getString(LangKey.DEPOSITED_MONEY, true, Map.of(
                     "%amount%", amount + "",
@@ -57,7 +59,8 @@ public class SubCompanyBalance extends BaseCommand {
         });
     }
 
-    @Subcommand("withdraw")
+    @Subcommand("preleva|withdraw")
+    @Syntax("<amount>")
     @Description("Withdraw money from a company's balance")
     public void onWithdrawCommand(Player player, int amount) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
@@ -82,7 +85,7 @@ public class SubCompanyBalance extends BaseCommand {
             player.closeInventory();
 
             CompanyUtils companyUtils = instance.getCompanyUtils();
-            companyUtils.updateBalance(company.getId(), -amount);
+            companyUtils.updateBalance(company, -amount);
             TrueCompanies.getEcon().depositPlayer(player, amount); // Assuming this method exists
             player.sendMessage(Language.getString(LangKey.WITHDREW_MONEY, true, Map.of(
                     "%amount%", amount + "",
@@ -90,7 +93,7 @@ public class SubCompanyBalance extends BaseCommand {
         });
     }
 
-    @Subcommand("balance")
+    @Subcommand("bilancio|bilancio")
     @Description("View a company's balance")
     public void onBalanceCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {

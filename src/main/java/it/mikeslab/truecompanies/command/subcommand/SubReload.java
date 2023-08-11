@@ -1,5 +1,6 @@
 package it.mikeslab.truecompanies.command.subcommand;
 
+import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Subcommand;
@@ -9,8 +10,8 @@ import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.entity.Player;
 
-@CommandAlias("company")
-public class SubReload {
+@CommandAlias("azienda|company")
+public class SubReload extends BaseCommand {
 
     private final TrueCompanies instance;
 
@@ -19,7 +20,7 @@ public class SubReload {
     }
 
 
-    @Subcommand("reload")
+    @Subcommand("ricarica|reload")
     @CommandPermission(Perms.RELOAD)
     public void onReloadCommand(Player player) {
 
@@ -28,6 +29,8 @@ public class SubReload {
 
             Language.reload();
             instance.reloadConfig();
+
+            instance.getCompanyLoader().loadAllCompanies();
 
         } catch (Exception e) {
             e.printStackTrace();

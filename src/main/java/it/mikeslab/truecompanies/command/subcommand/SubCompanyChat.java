@@ -2,10 +2,14 @@ package it.mikeslab.truecompanies.command.subcommand;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.util.format.ChatColor;
+import it.mikeslab.truecompanies.listener.ChatListener;
+import it.mikeslab.truecompanies.loader.CompanyLoader;
+import it.mikeslab.truecompanies.object.Company;
+import it.mikeslab.truecompanies.object.Group;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import lombok.Getter;
@@ -14,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-@CommandAlias("company")
+@CommandAlias("azienda|company")
 public class SubCompanyChat extends BaseCommand {
 
 
@@ -29,17 +33,29 @@ public class SubCompanyChat extends BaseCommand {
 
     @Subcommand("chat")
     @Syntax("<companyID>")
-    public void onChatCommand(Player player, String companyID) {
+    public void onChatCommand(Player player, String companyID, @Optional String... text) {
+
+        CompanyLoader companyLoader = instance.getCompanyLoader();
 
         if(inChat.containsKey(player.getName())) {
             player.sendMessage(Language.getString(LangKey.YOU_ALREADY_IN_COMPANY_CHAT, true));
             return;
         }
 
-        if(instance.getCompanyLoader().getCompany(companyID) == null) {
+        if(companyLoader.getCompany(companyID) == null) {
             player.sendMessage(Language.getString(LangKey.COMPANY_DOESNT_EXISTS, true));
             return;
         }
+
+        if(text.length > 0) {
+            Company company = companyLoader.getCompany(companyID);
+            int groupID = company.getEmployees().get(player.getName());
+            Group group = company.getGroups().get(groupID);
+
+            ChatListener.sendChatMessage(company, player, group, String.join(" ", text));
+            return;
+        }
+
 
         inChat.put(player.getName(), companyID);
 

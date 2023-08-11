@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.loader.CompanyUtils;
+import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.menu.selector.CompanySelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.GroupSelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.PlayerSelectorMenu;
@@ -20,13 +20,13 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.Optional;
 
-@CommandAlias("company")
+@CommandAlias("azienda|company")
 @RequiredArgsConstructor
 public class SubCompanyManage extends BaseCommand {
 
     private final TrueCompanies instance;
 
-    @Subcommand("manage")
+    @Subcommand("gestisci|manage")
     @Description("Promote or Demote an employee in a company")
     public void onPromoteCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
@@ -45,7 +45,7 @@ public class SubCompanyManage extends BaseCommand {
     }
 
     private void selectEmployeeToManage(Player player, Company company) {
-        new PlayerSelectorMenu(instance).show(player, Language.getString(LangKey.SELECT_A_PLAYER_MANAGE, false), Optional.of(company), Optional.of(true)).thenAccept(selectedEmployee -> {
+        new PlayerSelectorMenu(instance).show(player, Language.getString(LangKey.SELECT_A_PLAYER_MANAGE, false), Optional.of(company), Optional.of(false)).thenAccept(selectedEmployee -> {
             if (selectedEmployee == null) {
                 player.closeInventory();
                 return;
@@ -72,15 +72,17 @@ public class SubCompanyManage extends BaseCommand {
                 return;
             }
 
-            boolean isPromotion = currentGroup.getId() < group.getId();
+            boolean isPromotion = currentGroup.getId() > group.getId();
 
             if (isPromotion && !employerGroup.canPromote || !isPromotion && !employerGroup.canDemote) {
                 sendPermissionError(player, isPromotion);
                 return;
             }
 
+            player.closeInventory();
+
             CompanyUtils companyUtils = instance.getCompanyUtils();
-            companyUtils.changeEmployeeRank(company.getId(), selectedEmployee, group.getId());
+            companyUtils.changeEmployeeRank(company.getId(), selectedEmployee, isPromotion, group.getId());
 
             String actionMessage = isPromotion ? Language.getString(LangKey.PROMOTED, false) : Language.getString(LangKey.DEMOTED, false);
             player.sendMessage(Language.getString(LangKey.MANAGE_YOU_HAVE, true, Map.of("%action%", actionMessage,

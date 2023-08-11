@@ -30,16 +30,27 @@ public class ChatListener implements Listener {
         String companyID = SubCompanyChat.getInChat().get(playerName);
         Company company = instance.getCompanyLoader().getCompany(companyID);
 
-        int subjectGroupID = company.getEmployees().get(playerName);
+        int subjectGroupID = company.getEmployees().getOrDefault(playerName, -1);
+
+        if(subjectGroupID == -1) { // Player is not an employee of the company
+            SubCompanyChat.getInChat().remove(playerName);
+            return;
+        }
+
         Group subjectGroup = company.getGroups().get(subjectGroupID);
 
         event.setCancelled(true);
 
+        sendChatMessage(company, event.getPlayer(), subjectGroup, event.getMessage());
+    }
+
+
+    public static void sendChatMessage(Company company, Player player, Group group, String message) {
         String baseFormat = company.getChatFormat();
         baseFormat = baseFormat
-                .replace("{name}", playerName)
-                .replace("{group}", subjectGroup.getTag())
-                .replace("{message}", event.getMessage());
+                .replace("{name}", player.getName())
+                .replace("{group}", group.getTag())
+                .replace("{message}", message);
 
 
         for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -47,7 +58,6 @@ public class ChatListener implements Listener {
                 onlinePlayer.sendMessage(ChatColor.color(baseFormat));
             }
         }
-
     }
 
 

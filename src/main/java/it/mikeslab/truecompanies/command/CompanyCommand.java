@@ -8,7 +8,7 @@ import co.aikar.commands.annotation.HelpCommand;
 import it.mikeslab.truecompanies.util.format.ChatColor;
 import org.bukkit.entity.Player;
 
-@CommandAlias("company")
+@CommandAlias("company|azienda")
 public class CompanyCommand extends BaseCommand {
 
     @Default

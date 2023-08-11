@@ -2,10 +2,12 @@ package it.mikeslab.truecompanies.loader;
 
 import it.mikeslab.truecompanies.object.Company;
 import it.mikeslab.truecompanies.object.Group;
+import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CompanyLoader {
@@ -46,14 +48,13 @@ public class CompanyLoader {
     }
 
     private Company loadCompany(String id) {
+        try {
+
         File companyFile = new File(companiesDirectory, id + ".yml");
 
-        System.out.println("Loading company " + id);
         if (!companyFile.exists()) {
             return null;
         }
-
-        System.out.println("Company file exists");
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(companyFile);
 
@@ -65,28 +66,62 @@ public class CompanyLoader {
         Map<Integer, Group> groups = loadGroups(config);
         Map<String, Integer> employees = loadEmployees(config);
 
-        System.out.println(id + " " + displayName + " " + description + " " + chatFormat + " " + balance + " " + groups + " " + employees);
+        List<String> fireCommands = config.getStringList("commands.on-fire");
 
-        return new Company(id, displayName, description, balance, groups, employees, chatFormat);
+        return new Company(id, displayName, description, balance, groups, employees, chatFormat, fireCommands);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            SentryDiagnostic.capture(e);
+            return null;
+        }
     }
 
     private Map<Integer, Group> loadGroups(YamlConfiguration config) {
-        Map<Integer, Group> groups = new HashMap<>();
-        if (config.contains("groups")) {
-            for (String groupId : config.getConfigurationSection("groups").getKeys(false)) {
-                String tag = config.getString("groups." + groupId + ".tag");
-                boolean canHire = config.getBoolean("groups." + groupId + ".permissions.can-hire");
-                boolean canFire = config.getBoolean("groups." + groupId + ".permissions.can-fire");
-                boolean canDeposit = config.getBoolean("groups." + groupId + ".permissions.can-deposit");
-                boolean canWithdraw = config.getBoolean("groups." + groupId + ".permissions.can-withdraw");
-                boolean canPromote = config.getBoolean("groups." + groupId + ".permissions.can-promote");
-                boolean canDemote = config.getBoolean("groups." + groupId + ".permissions.can-demote");
+        try {
 
-                Group group = new Group(canHire, canFire, canDeposit, canWithdraw, canPromote, canDemote, tag, Integer.parseInt(groupId));
-                groups.put(Integer.parseInt(groupId), group);
+            Map<Integer, Group> groups = new HashMap<>();
+            if (config.contains("groups")) {
+                for (String groupId : config.getConfigurationSection("groups").getKeys(false)) {
+                    String tag = config.getString("groups." + groupId + ".tag");
+                    boolean canHire = config.getBoolean("groups." + groupId + ".permissions.can-hire");
+                    boolean canFire = config.getBoolean("groups." + groupId + ".permissions.can-fire");
+                    boolean canDeposit = config.getBoolean("groups." + groupId + ".permissions.can-deposit");
+                    boolean canWithdraw = config.getBoolean("groups." + groupId + ".permissions.can-withdraw");
+                    boolean canPromote = config.getBoolean("groups." + groupId + ".permissions.can-promote");
+                    boolean canDemote = config.getBoolean("groups." + groupId + ".permissions.can-demote");
+                    boolean canPaychecks = config.getBoolean("groups." + groupId + ".permissions.can-give-paychecks");
+
+                    List<String> hireCommands = config.getStringList("groups." + groupId + ".commands.on-hire");
+                    List<String> promoteCommands = config.getStringList("groups." + groupId + ".commands.on-promote");
+                    List<String> demoteCommands = config.getStringList("groups." + groupId + ".commands.on-demote");
+
+
+                    Group group = new Group(
+                            canHire,
+                            canFire,
+                            canDeposit,
+                            canWithdraw,
+                            canPromote,
+                            canDemote,
+                            canPaychecks,
+                            tag,
+                            Integer.parseInt(groupId),
+                            hireCommands,
+                            promoteCommands,
+                            demoteCommands
+                    );
+
+                    groups.put(Integer.parseInt(groupId), group);
+                }
             }
+            return groups;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            SentryDiagnostic.capture(e);
+            return null;
         }
-        return groups;
     }
 
     private Map<String, Integer> loadEmployees(YamlConfiguration config) {

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="maven-antrun-" default="main">
-  <target name="main">
-    <exec executable="/bin/sh">
-      <arg value="-c" />
-      <arg value="E:/Sentry-CLI/sentry-cli.exe --log-level=debug --auth-token=9022b26071924c9cb09a54db4e1f03eeed100abd576e43d7ae46d0c79453beca debug-files bundle-jvm --output=C:\Users\andre\IdeaProjects\TrueCompanies\target\sentry\source-bundle --debug-id=d24cf2e1-2496-4edf-877b-a9b4c9e96ac7 --org=mikeslab --project=TrueCompanies C:\Users\andre\IdeaProjects\TrueCompanies\src\main\java" />
-    </exec>
-  </target>
-</project>
