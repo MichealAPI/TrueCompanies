@@ -126,33 +126,45 @@ public class PlayerSelectorMenu {
         Map<String, Integer> players = new HashMap<>();
 
         if (optionalCompany.isPresent()) {
-            Company company = optionalCompany.get();
-
-            if (exemptEmployees.orElse(false)) {
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!onlinePlayer.getName().equals(target.getName()) && !company.getEmployees().containsKey(onlinePlayer.getName())) {
-                        players.put(onlinePlayer.getName(), 0);
-                    }
-                }
-            } else {
-                // -1 is used for persons that are not in a group and have the permission to manage the company
-                int subjectGroup = company.getEmployees().getOrDefault(target.getName(), -1);
-
-                for (Map.Entry<String, Integer> employeeEntry : company.getEmployees().entrySet()) {
-                    if (employeeEntry.getValue() > subjectGroup || subjectGroup == -1) {
-                        players.put(employeeEntry.getKey(), employeeEntry.getValue());
-                    }
-                }
-            }
-
+            loadQueriedPlayersForCompany(target, optionalCompany.get(), exemptEmployees.orElse(false), players);
         } else {
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (!onlinePlayer.equals(target)) {
-                    players.put(onlinePlayer.getName(), 0);
-                }
-            }
+            loadOnlinePlayersExcludingTarget(target, players);
         }
 
         return players;
     }
+
+    private void loadQueriedPlayersForCompany(Player target, Company company, boolean exemptEmployees, Map<String, Integer> players) {
+        if (exemptEmployees) {
+            loadOnlinePlayersExcludingCompanyEmployees(target, company, players);
+        } else {
+            loadEmployeesAboveTargetGroup(target, company, players);
+        }
+    }
+
+    private void loadOnlinePlayersExcludingCompanyEmployees(Player target, Company company, Map<String, Integer> players) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (!onlinePlayer.getName().equals(target.getName()) && !company.getEmployees().containsKey(onlinePlayer.getName())) {
+                players.put(onlinePlayer.getName(), 0);
+            }
+        }
+    }
+
+    private void loadEmployeesAboveTargetGroup(Player target, Company company, Map<String, Integer> players) {
+        int subjectGroup = company.getEmployees().getOrDefault(target.getName(), -1);
+        for (Map.Entry<String, Integer> employeeEntry : company.getEmployees().entrySet()) {
+            if (employeeEntry.getValue() > subjectGroup || subjectGroup == -1) {
+                players.put(employeeEntry.getKey(), employeeEntry.getValue());
+            }
+        }
+    }
+
+    private void loadOnlinePlayersExcludingTarget(Player target, Map<String, Integer> players) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (!onlinePlayer.equals(target)) {
+                players.put(onlinePlayer.getName(), 0);
+            }
+        }
+    }
+
 }
