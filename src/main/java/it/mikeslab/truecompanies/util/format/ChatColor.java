@@ -3,6 +3,7 @@ package it.mikeslab.truecompanies.util.format;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class ChatColor {
@@ -37,8 +38,9 @@ public class ChatColor {
     }
 
 
-    public static String[] color(List<String> lines) {
-        return lines.stream().map(ChatColor::color).toArray(String[]::new);
+    public static List<String> color(List<String> lines) {
+        return lines.stream().map(ChatColor::color).collect(Collectors.toList());
     }
+
 
 }

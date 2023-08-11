@@ -8,6 +8,7 @@ import it.mikeslab.truecompanies.TrueCompanies;
 import it.mikeslab.truecompanies.loader.CompanyLoader;
 import it.mikeslab.truecompanies.object.Company;
 import it.mikeslab.truecompanies.object.Group;
+import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import it.mikeslab.truecompanies.util.format.ChatColor;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
@@ -39,37 +40,59 @@ public class CompanySelectorMenu {
 
 
     public CompletableFuture<Company> show(Player target) {
-        CompletableFuture<Company> result = new CompletableFuture<>();
-        InventoryGui gui = new InventoryGui(instance, Language.getString(LangKey.SELECT_A_COMPANY, false), setup);
+        try {
 
-        GuiElementGroup group = new GuiElementGroup('b');
+            CompletableFuture<Company> result = new CompletableFuture<>();
 
-        for(Company company : companyLoader.getCompanies(target.getName())) {
-            StaticGuiElement element = generateCompanyAssociatedElement(company, target);
+            if (companyLoader.getCompanies(target.getName()).length == 0) {
+                result.complete(null);
+                target.sendMessage(Language.getString(LangKey.NO_COMPANIES, true));
+                return result;
+            }
 
-            element.setAction(click -> {
-                result.complete(company);
-                return true;
+            // Checking if player has only one company
+            if (companyLoader.getCompanies(target.getName()).length == 1) {
+                result.complete(companyLoader.getCompanies(target.getName())[0]);
+                return result;
+            }
+
+
+            InventoryGui gui = new InventoryGui(instance, Language.getString(LangKey.SELECT_A_COMPANY, false), setup);
+
+            GuiElementGroup group = new GuiElementGroup('b');
+
+            for (Company company : companyLoader.getCompanies(target.getName())) {
+                StaticGuiElement element = generateCompanyAssociatedElement(company, target);
+
+                element.setAction(click -> {
+                    result.complete(company);
+                    return true;
+                });
+
+                group.addElement(element);
+            }
+
+            gui.addElement(group);
+
+
+            // previous and next page
+            gui.addElement(new GuiPageElement('a', new ItemStack(Material.REDSTONE), GuiPageElement.PageAction.PREVIOUS, Language.getString(LangKey.PREVIOUS_PAGE, false)));
+            gui.addElement(new GuiPageElement('c', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
+
+            gui.setCloseAction(close -> {
+                result.complete(null);
+                return false;
             });
 
-            group.addElement(element);
+            gui.show(target);
+
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            SentryDiagnostic.capture(e);
+            return null;
         }
-
-        gui.addElement(group);
-
-
-        // previous and next page
-        gui.addElement(new GuiPageElement('a', new ItemStack(Material.REDSTONE), GuiPageElement.PageAction.PREVIOUS, Language.getString(LangKey.PREVIOUS_PAGE, false)));
-        gui.addElement(new GuiPageElement('c', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
-
-        gui.setCloseAction(close -> {
-            result.complete(null);
-            return false;
-        });
-
-        gui.show(target);
-
-        return result;
     }
 
 
@@ -102,6 +125,7 @@ public class CompanySelectorMenu {
         lore.add(Language.getString(LangKey.CAN_FIRE, false, Map.of("%can_fire%", targetGroup.canFire ? yesString : noString)));
         lore.add(Language.getString(LangKey.CAN_DEMOTE, false, Map.of("%can_demote%", targetGroup.canDemote ? yesString : noString)));
         lore.add(Language.getString(LangKey.CAN_PROMOTE, false, Map.of("%can_promote%", targetGroup.canPromote ? yesString : noString)));
+        lore.add(Language.getString(LangKey.CAN_GIVE_PAYCHECKS, false, Map.of("%can_give_paychecks%", targetGroup.canPaychecks ? yesString : noString)));
 
         lore.add(" ");
 

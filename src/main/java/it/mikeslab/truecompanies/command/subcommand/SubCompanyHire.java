@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.loader.CompanyUtils;
+import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.menu.selector.CompanySelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.GroupSelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.PlayerSelectorMenu;
@@ -20,13 +20,13 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.Optional;
 
-@CommandAlias("company")
+@CommandAlias("azienda|company")
 @RequiredArgsConstructor
 public class SubCompanyHire extends BaseCommand {
 
     private final TrueCompanies instance;
 
-    @Subcommand("hire")
+    @Subcommand("assumi|hire")
     @Description("Hire an employee for a company")
     public void onHireCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
@@ -56,7 +56,7 @@ public class SubCompanyHire extends BaseCommand {
                         return;
                     }
 
-                    companyUtils.hireEmployee(company.getId(), selectedEmployee, group.getId());
+                    companyUtils.hireEmployee(company, selectedEmployee, group.getId());
 
                     player.closeInventory();
                     player.sendMessage(Language.getString(LangKey.YOU_HIRED, true, Map.of("%player%", selectedEmployee, "%company%", company.getDisplayName(), "%group%", group.getTag())));

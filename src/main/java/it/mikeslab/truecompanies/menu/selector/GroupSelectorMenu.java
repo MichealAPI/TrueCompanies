@@ -7,6 +7,7 @@ import de.themoep.inventorygui.StaticGuiElement;
 import it.mikeslab.truecompanies.TrueCompanies;
 import it.mikeslab.truecompanies.object.Company;
 import it.mikeslab.truecompanies.object.Group;
+import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.ChatColor;
@@ -34,37 +35,45 @@ public class GroupSelectorMenu {
     }
 
     public CompletableFuture<Group> show(Player target, Company company) {
-        CompletableFuture<Group> result = new CompletableFuture<>();
-        InventoryGui gui = new InventoryGui(instance, Language.getString(LangKey.SELECT_A_GROUP, false), setup);
+        try {
 
-        GuiElementGroup elementGroup = new GuiElementGroup('b');
-        List<Group> groups = queryGroups(target, company);
+            CompletableFuture<Group> result = new CompletableFuture<>();
+            InventoryGui gui = new InventoryGui(instance, Language.getString(LangKey.SELECT_A_GROUP, false), setup);
 
-        for(Group group : groups) {
-            StaticGuiElement element = generateGroupAssociatedElement(group);
+            GuiElementGroup elementGroup = new GuiElementGroup('b');
+            List<Group> groups = queryGroups(target, company);
 
-            element.setAction(click -> {
-                result.complete(group);
-                return true;
+            for (Group group : groups) {
+                StaticGuiElement element = generateGroupAssociatedElement(group);
+
+                element.setAction(click -> {
+                    result.complete(group);
+                    return true;
+                });
+
+                elementGroup.addElement(element);
+            }
+
+            gui.addElement(elementGroup);
+
+            // previous and next page
+            gui.addElement(new GuiPageElement('a', new ItemStack(Material.REDSTONE), GuiPageElement.PageAction.PREVIOUS, Language.getString(LangKey.PREVIOUS_PAGE, false)));
+            gui.addElement(new GuiPageElement('c', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
+
+            gui.setCloseAction(close -> {
+                result.complete(null);
+                return false;
             });
 
-            elementGroup.addElement(element);
+            gui.show(target);
+
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            SentryDiagnostic.capture(e);
+            return null;
         }
-
-        gui.addElement(elementGroup);
-
-        // previous and next page
-        gui.addElement(new GuiPageElement('a', new ItemStack(Material.REDSTONE), GuiPageElement.PageAction.PREVIOUS, Language.getString(LangKey.PREVIOUS_PAGE, false)));
-        gui.addElement(new GuiPageElement('c', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
-
-        gui.setCloseAction(close -> {
-            result.complete(null);
-            return false;
-        });
-
-        gui.show(target);
-
-        return result;
     }
 
 
@@ -86,6 +95,7 @@ public class GroupSelectorMenu {
         lore.add(Language.getString(LangKey.CAN_FIRE, false, Map.of("%can_fire%", group.canFire ? yesString : noString)));
         lore.add(Language.getString(LangKey.CAN_DEMOTE, false, Map.of("%can_demote%", group.canDemote ? yesString : noString)));
         lore.add(Language.getString(LangKey.CAN_PROMOTE, false, Map.of("%can_promote%", group.canPromote ? yesString : noString)));
+        lore.add(Language.getString(LangKey.CAN_GIVE_PAYCHECKS, false, Map.of("%can_give_paychecks%", group.canPaychecks ? yesString : noString)));
         lore.add(" ");
 
         itemMeta.setLore(lore);

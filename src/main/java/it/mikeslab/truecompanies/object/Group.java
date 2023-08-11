@@ -2,8 +2,9 @@ package it.mikeslab.truecompanies.object;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Setter
 @AllArgsConstructor
@@ -15,9 +16,15 @@ public class Group {
             canDeposit,
             canWithdraw,
             canPromote,
-            canDemote;
+            canDemote,
+            canPaychecks;
 
     @Getter private String tag;
     @Getter private int id;
+
+    @Getter private List<String>
+            hireCommands,
+            promoteCommands,
+            demoteCommands;
 
 }

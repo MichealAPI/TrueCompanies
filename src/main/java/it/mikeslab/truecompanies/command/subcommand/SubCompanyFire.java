@@ -1,9 +1,11 @@
 package it.mikeslab.truecompanies.command.subcommand;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.Subcommand;
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.loader.CompanyUtils;
+import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.menu.selector.CompanySelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.PlayerSelectorMenu;
 import it.mikeslab.truecompanies.object.Group;
@@ -16,13 +18,13 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.Optional;
 
-@CommandAlias("company")
+@CommandAlias("azienda|company")
 @RequiredArgsConstructor
 public class SubCompanyFire extends BaseCommand {
 
     private final TrueCompanies instance;
 
-    @Subcommand("fire")
+    @Subcommand("licenzia|fire")
     @Description("Fire an employee from a company")
     public void onFireCommand(Player player) {
         CompanyUtils companyUtils = instance.getCompanyUtils();
@@ -65,6 +67,27 @@ public class SubCompanyFire extends BaseCommand {
                                     "%company%", company.getDisplayName())));
                         }
                     });
+        });
+    }
+
+    @Subcommand("licenziati|leave")
+    @Description("Leave a company")
+    public void onLeaveCommand(Player player) {
+        CompanyUtils companyUtils = instance.getCompanyUtils();
+
+        new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
+
+            if (company == null) {
+                player.closeInventory();
+                return;
+            }
+
+            int senderGroupID = company.getEmployees().get(player.getName());
+            Group senderGroup = company.getGroups().get(senderGroupID);
+
+            companyUtils.fireEmployee(company.getId(), player.getName());
+            player.sendMessage(Language.getString(LangKey.YOU_HAVE_BEEN_FIRED, true, Map.of(
+                    "%company%", company.getDisplayName())));
         });
     }
 

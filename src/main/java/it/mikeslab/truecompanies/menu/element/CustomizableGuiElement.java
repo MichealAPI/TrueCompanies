@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class CustomizableGuiElement {
@@ -27,7 +26,7 @@ public class CustomizableGuiElement {
     private StaticGuiElement createElement(Character character, ItemStack itemStack, ConfigurationSection section) {
         List<String> meta = new ArrayList<>();
         String displayName = ChatColor.color(section.getString("displayName"));
-        List<String> lore = section.getStringList("lore");
+        List<String> lore = ChatColor.color(section.getStringList("lore"));
 
         meta.add(displayName);
         meta.addAll(lore);

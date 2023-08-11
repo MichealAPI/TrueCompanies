@@ -5,7 +5,7 @@ import it.mikeslab.truecompanies.command.CompanyCommand;
 import it.mikeslab.truecompanies.command.subcommand.*;
 import it.mikeslab.truecompanies.listener.ChatListener;
 import it.mikeslab.truecompanies.loader.CompanyLoader;
-import it.mikeslab.truecompanies.loader.CompanyUtils;
+import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.util.language.Language;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
@@ -42,13 +42,7 @@ public final class TrueCompanies extends JavaPlugin {
         this.loadCompanies();
     }
 
-    @Override
-    public void onDisable() {
 
-        // todo: unloading something? or maybe just saiving companies
-
-
-    }
 
     private void loadConfigurationFiles() {
         saveDefaultConfig();
@@ -80,6 +74,10 @@ public final class TrueCompanies extends JavaPlugin {
         commandManager.registerCommand(new SubCompanyManage(this));
         commandManager.registerCommand(new SubCompanyChat(this));
         commandManager.registerCommand(new SubCompanyPerms(this));
+        commandManager.registerCommand(new SubCompanyOwnership(this));
+        commandManager.registerCommand(new SubCompanyPaychecks(this));
+
+        commandManager.registerCommand(new SubReload(this));
 
         commandManager.enableUnstableAPI("help");
     }

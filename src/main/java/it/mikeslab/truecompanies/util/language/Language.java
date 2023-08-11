@@ -101,6 +101,7 @@ public class Language {
 
     public static String getString(LangKey langKey, boolean withPrefix, Map<String, String> replacements) {
         String value = getString(langKey, withPrefix);
+
         for (Map.Entry<String, String> replacement : replacements.entrySet()) {
             value = value.replace(replacement.getKey(), replacement.getValue());
         }

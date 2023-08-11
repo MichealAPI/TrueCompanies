@@ -13,7 +13,9 @@ import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.entity.Player;
 
-@CommandAlias("company")
+import java.util.Map;
+
+@CommandAlias("azienda|company")
 public class SubCompanyPerms extends BaseCommand {
 
     private final TrueCompanies instance;
@@ -23,7 +25,7 @@ public class SubCompanyPerms extends BaseCommand {
     }
 
 
-    @Subcommand("perms|permissions")
+    @Subcommand("permessi|perms|permissions")
     public void onPermsCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
 
@@ -41,18 +43,16 @@ public class SubCompanyPerms extends BaseCommand {
                 if(group == null) {
                     return;
                 }
-                
-                
-                
-                new CompanyPermsInventory(instance).show(player, group, "Edit " + group.getTag() + " group", company);
+
+                new CompanyPermsInventory(instance).show(player, group,
+                        Language.getString(
+                                LangKey.EDIT_PERMS_MENU,
+                                false,
+                                Map.of("%group%", group.getTag())
+                        ), company);
             });
             
         });
-    }
-
-    private Group getGroup(Company company, String playerName) {
-        int groupId = company.getEmployees().get(playerName);
-        return company.getGroups().get(groupId);
     }
 
 }

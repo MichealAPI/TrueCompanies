@@ -7,6 +7,7 @@ import de.themoep.inventorygui.StaticGuiElement;
 import it.mikeslab.truecompanies.TrueCompanies;
 import it.mikeslab.truecompanies.menu.element.CustomizableGuiElement;
 import it.mikeslab.truecompanies.object.Company;
+import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import it.mikeslab.truecompanies.util.format.ChatColor;
 import it.mikeslab.truecompanies.util.itemstack.ItemStackUtil;
 import it.mikeslab.truecompanies.util.language.LangKey;
@@ -43,49 +44,50 @@ public class PlayerSelectorMenu {
 
 
     public CompletableFuture<String> show(Player target, String title, Optional<Company> optionalCompany, Optional<Boolean> exemptEmployees) {
-        String inventoryID = "player-selector";
-
-        Map<String, Integer> queriedPlayers = loadQueriedPlayers(target, optionalCompany, exemptEmployees);
-        CompletableFuture<String> result = new CompletableFuture<>();
-
-        InventoryGui gui = new InventoryGui(instance, title, setup);
-
-        GuiElementGroup group = new GuiElementGroup('a');
         try {
-            for (Map.Entry<String, Integer> entry : queriedPlayers.entrySet()) {
-                StaticGuiElement element = generatePlayerAssociatedElement(entry.getKey(), optionalCompany, exemptEmployees);
+            String inventoryID = "player-selector";
 
-                element.setAction(click -> {
-                    click.getGui().close();
-                    result.complete(entry.getKey());
-                    return true;
+            Map<String, Integer> queriedPlayers = loadQueriedPlayers(target, optionalCompany, exemptEmployees);
+            CompletableFuture<String> result = new CompletableFuture<>();
+
+            InventoryGui gui = new InventoryGui(instance, title, setup);
+
+            GuiElementGroup group = new GuiElementGroup('a');
+                for (Map.Entry<String, Integer> entry : queriedPlayers.entrySet()) {
+                    StaticGuiElement element = generatePlayerAssociatedElement(entry.getKey(), optionalCompany, exemptEmployees);
+
+                    element.setAction(click -> {
+                        click.getGui().close();
+                        result.complete(entry.getKey());
+                        return true;
+                    });
+
+                    group.addElement(element);
+                }
+
+                gui.addElement(group);
+
+
+                // infoBook
+                gui.addElement(new CustomizableGuiElement(menuConfiguration).create('b', inventoryID, "info-book"));
+
+                // previous and next page
+                gui.addElement(new GuiPageElement('c', new ItemStack(Material.REDSTONE), GuiPageElement.PageAction.PREVIOUS, Language.getString(LangKey.PREVIOUS_PAGE, false)));
+                gui.addElement(new GuiPageElement('d', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
+
+
+                gui.setCloseAction(close -> {
+                    result.complete(null);
+                    return false;
                 });
 
-                group.addElement(element);
+                gui.show(target);
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
+                SentryDiagnostic.capture(e);
             }
-
-            gui.addElement(group);
-
-
-            // infoBook
-            gui.addElement(new CustomizableGuiElement(menuConfiguration).create('b', inventoryID, "info-book"));
-
-            // previous and next page
-            gui.addElement(new GuiPageElement('c', new ItemStack(Material.REDSTONE), GuiPageElement.PageAction.PREVIOUS, Language.getString(LangKey.PREVIOUS_PAGE, false)));
-            gui.addElement(new GuiPageElement('d', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
-
-
-            gui.setCloseAction(close -> {
-                result.complete(null);
-                return false;
-            });
-
-            gui.show(target);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
+        return CompletableFuture.completedFuture(null);
     }
 
 
@@ -128,7 +130,7 @@ public class PlayerSelectorMenu {
 
             if (exemptEmployees.orElse(false)) {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    if (!onlinePlayer.equals(target) && !company.getEmployees().containsKey(onlinePlayer.getName())) {
+                    if (!onlinePlayer.getName().equals(target.getName()) && !company.getEmployees().containsKey(onlinePlayer.getName())) {
                         players.put(onlinePlayer.getName(), 0);
                     }
                 }
