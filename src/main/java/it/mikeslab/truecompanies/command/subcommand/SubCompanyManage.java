@@ -28,89 +28,56 @@ public class SubCompanyManage extends BaseCommand {
 
     @Subcommand("manage")
     @Description("Promote or Demote an employee in a company")
-    public void onPromoteCommand(Player player) {
+    public void onManageCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
             if (company == null) {
                 player.closeInventory();
                 return;
             }
-
-            selectEmployeeToManage(player, company);
-        });
-    }
-
-    private Group getGroup(Company company, String playerName) {
-        int senderGroupID = company.getEmployees().get(playerName);
-        return company.getGroups().get(senderGroupID);
-    }
-
-    private void selectEmployeeToManage(Player player, Company company) {
-        new PlayerSelectorMenu(instance).show(player, Language.getString(LangKey.SELECT_A_PLAYER_MANAGE, false), Optional.of(company), Optional.of(false)).thenAccept(selectedEmployee -> {
-            if (selectedEmployee == null) {
-                player.closeInventory();
-                return;
-            }
-
-            manageSelectedEmployee(player, company, selectedEmployee);
+            new PlayerSelectorMenu(instance).show(player, Language.getString(LangKey.SELECT_A_PLAYER_MANAGE, false), Optional.of(company), Optional.of(false)).thenAccept(selectedEmployee -> {
+                if (selectedEmployee != null) {
+                    manageSelectedEmployee(player, company, selectedEmployee);
+                } else {
+                    player.closeInventory();
+                }
+            });
         });
     }
 
     private void manageSelectedEmployee(Player player, Company company, String selectedEmployee) {
-
         new GroupSelectorMenu(instance).show(player, company).thenAccept(group -> {
-            Group employerGroup = getGroup(company, player.getName());
-            Group currentGroup = getGroup(company, selectedEmployee);
+            Group employerGroup = company.getGroups().get(company.getEmployees().get(player.getName()));
+            Group currentGroup = company.getGroups().get(company.getEmployees().get(selectedEmployee));
 
-            if (group == null) {
-                player.closeInventory();
-                return;
-            }
-
-            if(currentGroup.getId() == group.getId()) {
+            if (group == null || currentGroup.getId() == group.getId()) {
                 player.sendMessage(Language.getString(LangKey.CANNOT_PROMOTE_DEMOTE_SAME_RANK, true));
                 player.closeInventory();
                 return;
             }
 
             boolean isPromotion = currentGroup.getId() > group.getId();
-
-            if (isPromotion && !employerGroup.canPromote || !isPromotion && !employerGroup.canDemote) {
-                sendPermissionError(player, isPromotion);
+            if ((isPromotion && !employerGroup.canPromote) || (!isPromotion && !employerGroup.canDemote)) {
+                player.sendMessage(Language.getString(LangKey.MANAGE_EMPLOYEES_NO_PERMS, true).replace("%action%", isPromotion ? Language.getString(LangKey.PROMOTE, false) : Language.getString(LangKey.DEMOTE, false)));
+                player.closeInventory();
                 return;
             }
 
-            player.closeInventory();
-
-            CompanyUtils companyUtils = instance.getCompanyUtils();
-            companyUtils.changeEmployeeGroup(company, selectedEmployee, group.getId());
-
-            String actionMessage = isPromotion ? Language.getString(LangKey.PROMOTED, false) : Language.getString(LangKey.DEMOTED, false);
-            player.sendMessage(Language.getString(LangKey.MANAGE_YOU_HAVE, true, Map.of("%action%", actionMessage,
-                            "%player%", selectedEmployee,
-                            "%company%", company.getDisplayName(),
-                            "%group%", group.getTag()
-            )));
-
-            notifyTargetOfPromotion(selectedEmployee, group, company.getDisplayName(), isPromotion);
-        });
-    }
-
-    private void sendPermissionError(Player player, boolean isPromotion) {
-        String actionMessage = isPromotion ? Language.getString(LangKey.PROMOTE, false) : Language.getString(LangKey.DEMOTE, false);
-        player.sendMessage(Language.getString(LangKey.MANAGE_EMPLOYEES_NO_PERMS, true).replace("%action%", actionMessage));
-        player.closeInventory();
-    }
-
-    private void notifyTargetOfPromotion(String selectedEmployee, Group group, String companyName, boolean isPromotion) {
-        Player target = Bukkit.getPlayer(selectedEmployee);
-
-        if (target != null) {
-            String actionMessage = isPromotion ? Language.getString(LangKey.PROMOTED, false) : Language.getString(LangKey.DEMOTED, false);
-            target.sendMessage(Language.getString(LangKey.MANAGE_YOU_HAVE_BEEN, true, Map.of(
-                    "%action%", actionMessage,
-                    "%company%", companyName,
+            instance.getCompanyUtils().changeEmployeeGroup(company, selectedEmployee, group.getId());
+            player.sendMessage(Language.getString(LangKey.MANAGE_YOU_HAVE, true, Map.of(
+                    "%action%", Language.getString(isPromotion ? LangKey.PROMOTED : LangKey.DEMOTED, false),
+                    "%player%", selectedEmployee,
+                    "%company%", company.getDisplayName(),
                     "%group%", group.getTag()
             )));
-        }
+
+            Player target = Bukkit.getPlayer(selectedEmployee);
+            if (target != null) {
+                target.sendMessage(Language.getString(LangKey.MANAGE_YOU_HAVE_BEEN, true, Map.of(
+                        "%action%", Language.getString(isPromotion ? LangKey.PROMOTED : LangKey.DEMOTED, false),
+                        "%company%", company.getDisplayName(),
+                        "%group%", group.getTag()
+                )));
+            }
+        });
     }
 }

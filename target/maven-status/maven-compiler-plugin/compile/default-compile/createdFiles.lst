@@ -27,6 +27,7 @@ it\mikeslab\truecompanies\util\language\Language.class
 it\mikeslab\truecompanies\util\format\ChatColor.class
 it\mikeslab\truecompanies\command\subcommand\SubCompanyFire.class
 it\mikeslab\truecompanies\command\subcommand\SubCompanyOwnership.class
+it\mikeslab\truecompanies\util\CompanyUtils$ActionType.class
 it\mikeslab\truecompanies\menu\perms\GroupPermission.class
 it\mikeslab\truecompanies\loader\CompanyLoader.class
 it\mikeslab\truecompanies\command\subcommand\SubCompanyChat.class
