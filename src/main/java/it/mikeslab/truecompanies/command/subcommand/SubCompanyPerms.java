@@ -7,6 +7,8 @@ import it.mikeslab.truecompanies.TrueCompanies;
 import it.mikeslab.truecompanies.menu.perms.CompanyPermsInventory;
 import it.mikeslab.truecompanies.menu.selector.CompanySelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.GroupSelectorMenu;
+import it.mikeslab.truecompanies.object.Company;
+import it.mikeslab.truecompanies.object.Group;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.entity.Player;
