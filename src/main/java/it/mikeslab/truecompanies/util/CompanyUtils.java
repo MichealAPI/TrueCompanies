@@ -1,7 +1,6 @@
 package it.mikeslab.truecompanies.util;
 
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.event.CompanyFireEvent;
 import it.mikeslab.truecompanies.loader.CompanyLoader;
 import it.mikeslab.truecompanies.menu.general.ConfirmMenu;
 import it.mikeslab.truecompanies.object.Company;
@@ -20,71 +19,95 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for operations related to Companies.
+ */
 @RequiredArgsConstructor
 public class CompanyUtils {
+
     private final CompanyLoader companyLoader;
 
-    public void hireEmployee(Company company, String username, int rank) {
-
-        company.getEmployees().put(username, rank);
-        saveCompanyToFile(company.getId(), company);
-
-        Group group = company.getGroups().get(rank);
-
-        executeCommands(group.getHireCommands(), username);
-
-        String title = StringUtils.capitalize(Language.getString(LangKey.HIRED_TITLE, true));
-        String subTitle = company.getDisplayName() + " | " + group.getTag();
-
-        this.sendTitle(username, subTitle, title);
-
+    /**
+     * Hires an employee to the specified company.
+     *
+     * @param company        The company.
+     * @param playerUsername The username of the player to be hired.
+     * @param groupID        The group ID for the hired player.
+     */
+    public void hireEmployee(Company company, String playerUsername, int groupID) {
+        updateUserStatus(company, playerUsername, groupID, ActionType.HIRE);
     }
 
-    private void sendTitle(String username, String subTitle, String title) {
-        if(Bukkit.getPlayer(username) == null) return;
+    /**
+     * Fires an employee from the specified company.
+     *
+     * @param company  The company.
+     * @param username The username of the player to be fired.
+     */
+    public void fireEmployee(Company company, String username) {
+        updateUserStatus(company, username, null, ActionType.FIRE);
+    }
 
-        Player player = Bukkit.getPlayer(username);
+    /**
+     * Updates user status in a company (Hire/Fire).
+     *
+     * @param company  The company.
+     * @param username The username of the player.
+     * @param groupID  The group ID for the action. Can be null for fire action.
+     * @param action   The type of action.
+     */
+    private void updateUserStatus(Company company, String username, Integer groupID, ActionType action) {
+        if (action == ActionType.HIRE) {
+            company.getEmployees().put(username, groupID);
+        } else {
+            company.getEmployees().remove(username);
+        }
+        saveCompanyToFile(company);
+
+        Group group = groupID != null ? company.getGroups().get(groupID) : null;
+
+        List<String> commands = (action == ActionType.HIRE) ? group.getHireCommands() : company.getFireCommands();
+        executeCommands(commands, username);
+
+        LangKey key = (action == ActionType.HIRE) ? LangKey.HIRED_TITLE : LangKey.FIRED_TITLE;
+        String title = StringUtils.capitalize(Language.getString(key, true));
+        String subTitle = company.getDisplayName() + (group != null ? " | " + group.getTag() : "");
+
+        sendTitle(username, subTitle, title);
+    }
+
+    private void sendTitle(String playerUsername, String subTitle, String title) {
+        if(Bukkit.getPlayer(playerUsername) == null) return;
+
+        Player player = Bukkit.getPlayer(playerUsername);
 
         player.sendTitle(title, subTitle);
         player.playSound(player.getLocation(), "entity.player.levelup", 1, 1);
     }
 
-    public void fireEmployee(Company company, String username) {
 
-        company.getEmployees().remove(username);
-        saveCompanyToFile(company.getId(), company);
-
-        executeCommands(company.getFireCommands(), username);
-
-        String title = StringUtils.capitalize(Language.getString(LangKey.FIRED_TITLE, true));
-        String subTitle = company.getDisplayName();
-
-        this.sendTitle(username, subTitle, title);
-    }
-
-
-    private void executeCommands(List<String> commands, String targetName) {
+    private void executeCommands(List<String> commands, String targetUsername) {
 
         for(String command : commands) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", targetName));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", targetUsername));
         }
 
     }
 
 
 
-    public void changeEmployeeGroup(Company company, String employeeUsername, int newGroup) {
+    public void changeEmployeeGroup(Company company, String employeeUsername, int newGroupID) {
 
         int oldRank = company.getEmployees().get(employeeUsername);
         Group oldGroup = company.getGroups().get(oldRank);
 
-        boolean isPromotion = oldGroup.getId() < newGroup;
+        boolean isPromotion = oldGroup.getId() < newGroupID;
 
-        Group group = company.getGroups().get(newGroup);
+        Group group = company.getGroups().get(newGroupID);
 
         if (company.getEmployees().containsKey(employeeUsername)) {
-            company.getEmployees().put(employeeUsername, newGroup);
-            saveCompanyToFile(company.getId(), company);
+            company.getEmployees().put(employeeUsername, newGroupID);
+            saveCompanyToFile(company);
         }
 
         executeCommands(isPromotion ? group.getPromoteCommands() : group.getDemoteCommands(), employeeUsername);
@@ -106,7 +129,7 @@ public class CompanyUtils {
 
     }
 
-    public void givePaycheck(Company company, TrueCompanies instance, double payCheckAmount, Player sender, OfflinePlayer target) {
+    public void givePaycheck(Company company, double payCheckAmount, Player sender, OfflinePlayer target) {
 
         if(company.getBalance() < payCheckAmount) {
             sender.closeInventory();
@@ -114,7 +137,7 @@ public class CompanyUtils {
             return;
         }
 
-        new ConfirmMenu(instance).show(sender,
+        new ConfirmMenu(TrueCompanies.getInstance()).show(sender,
                 Language.getString(LangKey.GIVE_PAYCHECK_MENU, false,
                         Map.of(
                                 "%player%", target.getName())
@@ -198,7 +221,7 @@ public class CompanyUtils {
                 "%company%", company.getDisplayName()
         )));
 
-        saveCompanyToFile(company.getId(), company);
+        saveCompanyToFile(company);
 
     }
 
@@ -209,7 +232,7 @@ public class CompanyUtils {
 
         double newBalance = company.getBalance() + amount;
         company.setBalance(newBalance);
-        saveCompanyToFile(company.getId(), company);
+        saveCompanyToFile(company);
 
     }
 
@@ -219,13 +242,13 @@ public class CompanyUtils {
         // Assuming Company class has a setGroup method
         company.getGroups().put(group.getId(), group);
 
-        saveCompanyToFile(company.getId(), company);
+        saveCompanyToFile(company);
 
         return true;
     }
 
-    private void saveCompanyToFile(String companyId, Company company) {
-        File companyFile = new File(companyLoader.companiesDirectory, companyId + ".yml");
+    private void saveCompanyToFile(Company company) {
+        File companyFile = new File(companyLoader.companiesDirectory, company.getId() + ".yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(companyFile);
 
         // Assuming you have setters and getters for all the attributes of a Company
@@ -253,5 +276,11 @@ public class CompanyUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private enum ActionType {
+        HIRE,
+        FIRE
     }
 }

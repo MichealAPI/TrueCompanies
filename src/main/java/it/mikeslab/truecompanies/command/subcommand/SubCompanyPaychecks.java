@@ -5,10 +5,10 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
 import it.mikeslab.truecompanies.TrueCompanies;
-import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.menu.selector.CompanySelectorMenu;
 import it.mikeslab.truecompanies.menu.selector.PlayerSelectorMenu;
 import it.mikeslab.truecompanies.object.Group;
+import it.mikeslab.truecompanies.util.CompanyUtils;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.Bukkit;
@@ -59,7 +59,7 @@ public class SubCompanyPaychecks extends BaseCommand {
 
 
                 CompanyUtils companyUtils = instance.getCompanyUtils();
-                companyUtils.givePaycheck(company, instance, amount, player, Bukkit.getOfflinePlayer(employee));
+                companyUtils.givePaycheck(company, amount, player, Bukkit.getOfflinePlayer(employee));
             });
 
         });
