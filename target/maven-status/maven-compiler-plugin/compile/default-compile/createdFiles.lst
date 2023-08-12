@@ -9,10 +9,13 @@ it\mikeslab\truecompanies\Perms.class
 it\mikeslab\truecompanies\util\itemstack\ItemStackUtil.class
 it\mikeslab\truecompanies\menu\perms\CompanyPermsInventory.class
 it\mikeslab\truecompanies\listener\ChatListener.class
+it\mikeslab\truecompanies\event\CompanyFireEvent.class
 it\mikeslab\truecompanies\command\CompanyCommand.class
 it\mikeslab\truecompanies\menu\selector\PlayerSelectorMenu.class
 it\mikeslab\truecompanies\util\language\LangKey.class
+it\mikeslab\truecompanies\api\CompanyAPI.class
 it\mikeslab\truecompanies\command\subcommand\SubCompanyManage.class
+it\mikeslab\truecompanies\event\CompanyHireEvent.class
 it\mikeslab\truecompanies\command\subcommand\SubCompanyHire.class
 it\mikeslab\truecompanies\menu\selector\CompanySelectorMenu.class
 it\mikeslab\truecompanies\command\subcommand\SubCompanyBalance.class

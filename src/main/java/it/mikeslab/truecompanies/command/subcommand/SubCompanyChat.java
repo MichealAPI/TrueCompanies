@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 public class SubCompanyChat extends BaseCommand {
 
 

@@ -1,6 +1,7 @@
 package it.mikeslab.truecompanies.util;
 
 import it.mikeslab.truecompanies.TrueCompanies;
+import it.mikeslab.truecompanies.event.CompanyFireEvent;
 import it.mikeslab.truecompanies.loader.CompanyLoader;
 import it.mikeslab.truecompanies.menu.general.ConfirmMenu;
 import it.mikeslab.truecompanies.object.Company;
@@ -48,12 +49,10 @@ public class CompanyUtils {
         player.playSound(player.getLocation(), "entity.player.levelup", 1, 1);
     }
 
-    public void fireEmployee(String companyId, String username) {
-        Company company = companyLoader.getCompany(companyId);
-        if (company == null) return;
+    public void fireEmployee(Company company, String username) {
 
         company.getEmployees().remove(username);
-        saveCompanyToFile(companyId, company);
+        saveCompanyToFile(company.getId(), company);
 
         executeCommands(company.getFireCommands(), username);
 
@@ -74,21 +73,21 @@ public class CompanyUtils {
 
 
 
-    public void changeEmployeeRank(String companyId, String username, boolean isPromotion, int newRank) {
-        Company company = companyLoader.getCompany(companyId);
-        if (company == null) return;
+    public void changeEmployeeGroup(Company company, String employeeUsername, int newGroup) {
 
-        int oldRank = company.getEmployees().get(username);
+        int oldRank = company.getEmployees().get(employeeUsername);
         Group oldGroup = company.getGroups().get(oldRank);
 
-        Group group = company.getGroups().get(newRank);
+        boolean isPromotion = oldGroup.getId() < newGroup;
 
-        if (company.getEmployees().containsKey(username)) {
-            company.getEmployees().put(username, newRank);
-            saveCompanyToFile(companyId, company);
+        Group group = company.getGroups().get(newGroup);
+
+        if (company.getEmployees().containsKey(employeeUsername)) {
+            company.getEmployees().put(employeeUsername, newGroup);
+            saveCompanyToFile(company.getId(), company);
         }
 
-        executeCommands(isPromotion ? group.getPromoteCommands() : group.getDemoteCommands(), username);
+        executeCommands(isPromotion ? group.getPromoteCommands() : group.getDemoteCommands(), employeeUsername);
 
         String title, subTitle;
         subTitle = oldGroup.getTag() + " > " + group.getTag();
@@ -96,11 +95,11 @@ public class CompanyUtils {
         if(isPromotion) {
             title = StringUtils.capitalize(Language.getString(LangKey.PROMOTED_TITLE, true));
 
-            this.sendTitle(username, subTitle, title);
+            this.sendTitle(employeeUsername, subTitle, title);
         } else {
             title = StringUtils.capitalize(Language.getString(LangKey.DEMOTED_TITLE, true));
 
-            this.sendTitle(username, subTitle, title);
+            this.sendTitle(employeeUsername, subTitle, title);
         }
 
 
@@ -144,7 +143,7 @@ public class CompanyUtils {
 
     }
 
-    public void transferOwnership(Company company, Player newOwner, Player oldOwner) {
+    public void transferCompanyOwnership(Company company, Player newOwner, Player oldOwner) {
         // Assuming Company class has a setOwner method
         int newOwnerOldGroup = company.getEmployees().getOrDefault(newOwner.getName(), -1);
 
@@ -214,15 +213,13 @@ public class CompanyUtils {
 
     }
 
-    public boolean updateGroupPermissions(String companyId, Group group) {
-        Company company = companyLoader.getCompany(companyId);
-
+    public boolean updateGroupPermissions(Company company, Group group) {
         if (company == null) return false;
 
         // Assuming Company class has a setGroup method
         company.getGroups().put(group.getId(), group);
 
-        saveCompanyToFile(companyId, company);
+        saveCompanyToFile(company.getId(), company);
 
         return true;
     }

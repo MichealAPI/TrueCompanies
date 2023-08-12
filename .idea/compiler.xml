@@ -9,8 +9,5 @@
         <module name="TrueCompanies" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="TrueCompanies" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>

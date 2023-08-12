@@ -10,7 +10,7 @@ import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.entity.Player;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 public class SubReload extends BaseCommand {
 
     private final TrueCompanies instance;
@@ -20,7 +20,7 @@ public class SubReload extends BaseCommand {
     }
 
 
-    @Subcommand("ricarica|reload")
+    @Subcommand("reload")
     @CommandPermission(Perms.RELOAD)
     public void onReloadCommand(Player player) {
 

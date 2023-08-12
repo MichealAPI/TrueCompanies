@@ -98,7 +98,7 @@ public class CompanyPermsInventory {
             gui.addElement(new GuiPageElement('c', new ItemStack(Material.ARROW), GuiPageElement.PageAction.NEXT, Language.getString(LangKey.NEXT_PAGE, false)));
 
             gui.setCloseAction(close -> {
-                if (companyUtils.updateGroupPermissions(company.getId(), subjectGroup)) {
+                if (companyUtils.updateGroupPermissions(company, subjectGroup)) {
                     target.sendMessage(Language.getString(LangKey.PERMS_UPDATED, true));
                 } else {
                     target.sendMessage(Language.getString(LangKey.ERROR_UPDATING_PERMS, true));
