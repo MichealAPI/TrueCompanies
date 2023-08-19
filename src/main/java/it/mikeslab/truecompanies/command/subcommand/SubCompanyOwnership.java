@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 public class SubCompanyOwnership extends BaseCommand {
 
     private final TrueCompanies instance;
@@ -25,7 +25,7 @@ public class SubCompanyOwnership extends BaseCommand {
     }
 
 
-    @Subcommand("trasferisciproprieta|transferownership")
+    @Subcommand("transferownership")
     @Syntax("<player>")
     public void onTransferOwnershipCommand(Player player, OnlinePlayer target) {
 
@@ -51,7 +51,7 @@ public class SubCompanyOwnership extends BaseCommand {
 
                 CompanyUtils companyUtils = instance.getCompanyUtils();
 
-                companyUtils.transferOwnership(company, target.getPlayer(), player);
+                companyUtils.transferCompanyOwnership(company, target.getPlayer(), player);
             });
 
 

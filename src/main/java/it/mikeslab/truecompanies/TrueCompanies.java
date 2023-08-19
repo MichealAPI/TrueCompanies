@@ -21,6 +21,7 @@ import java.io.File;
 public final class TrueCompanies extends JavaPlugin {
 
     @Getter private static Economy econ = null;
+    @Getter private static TrueCompanies instance;
 
     private FileConfiguration menuConfiguration;
     private CompanyLoader companyLoader;
@@ -29,7 +30,7 @@ public final class TrueCompanies extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             Bukkit.getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -40,6 +41,10 @@ public final class TrueCompanies extends JavaPlugin {
         this.registerCommands();
 
         this.loadCompanies();
+
+        // This Static instance is only in use inside the CompanyAPI class
+        // to generate a default API instance
+        instance = this;
     }
 
 

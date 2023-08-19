@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 public class SubCompanyPerms extends BaseCommand {
 
     private final TrueCompanies instance;
@@ -25,7 +25,7 @@ public class SubCompanyPerms extends BaseCommand {
     }
 
 
-    @Subcommand("permessi|perms|permissions")
+    @Subcommand("perms|permissions")
     public void onPermsCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
 

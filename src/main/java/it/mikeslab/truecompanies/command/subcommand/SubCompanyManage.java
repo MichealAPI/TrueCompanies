@@ -20,15 +20,15 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 import java.util.Optional;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 @RequiredArgsConstructor
 public class SubCompanyManage extends BaseCommand {
 
     private final TrueCompanies instance;
 
-    @Subcommand("gestisci|manage")
+    @Subcommand("manage")
     @Description("Promote or Demote an employee in a company")
-    public void onPromoteCommand(Player player) {
+    public void onManageCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {
             if (company == null) {
                 player.closeInventory();
@@ -82,7 +82,7 @@ public class SubCompanyManage extends BaseCommand {
             player.closeInventory();
 
             CompanyUtils companyUtils = instance.getCompanyUtils();
-            companyUtils.changeEmployeeRank(company.getId(), selectedEmployee, isPromotion, group.getId());
+            companyUtils.changeEmployeeGroup(company, selectedEmployee, group.getId());
 
             String actionMessage = isPromotion ? Language.getString(LangKey.PROMOTED, false) : Language.getString(LangKey.DEMOTED, false);
             player.sendMessage(Language.getString(LangKey.MANAGE_YOU_HAVE, true, Map.of("%action%", actionMessage,

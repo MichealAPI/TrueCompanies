@@ -18,13 +18,13 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 @RequiredArgsConstructor
 public class SubCompanyBalance extends BaseCommand {
 
     private final TrueCompanies instance;
 
-    @Subcommand("deposita|deposit")
+    @Subcommand("deposit")
     @Syntax("<amount>")
     @Description("Deposit money into a company's balance")
     public void onDepositCommand(Player player, int amount) {
@@ -59,7 +59,7 @@ public class SubCompanyBalance extends BaseCommand {
         });
     }
 
-    @Subcommand("preleva|withdraw")
+    @Subcommand("withdraw")
     @Syntax("<amount>")
     @Description("Withdraw money from a company's balance")
     public void onWithdrawCommand(Player player, int amount) {
@@ -93,7 +93,7 @@ public class SubCompanyBalance extends BaseCommand {
         });
     }
 
-    @Subcommand("bilancio|bilancio")
+    @Subcommand("balance")
     @Description("View a company's balance")
     public void onBalanceCommand(Player player) {
         new CompanySelectorMenu(instance).show(player).thenAccept(company -> {

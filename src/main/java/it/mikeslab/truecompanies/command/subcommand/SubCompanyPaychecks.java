@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-@CommandAlias("azienda|company")
+@CommandAlias("company")
 public class SubCompanyPaychecks extends BaseCommand {
 
     private final TrueCompanies instance;
@@ -26,7 +26,7 @@ public class SubCompanyPaychecks extends BaseCommand {
     }
 
 
-    @Subcommand("stipendi|paychecks")
+    @Subcommand("givepaycheck")
     @Syntax("<amount>")
     public void onPaychecksCommand(Player player, double amount) {
 
@@ -59,7 +59,7 @@ public class SubCompanyPaychecks extends BaseCommand {
 
 
                 CompanyUtils companyUtils = instance.getCompanyUtils();
-                companyUtils.givePaycheck(company, instance, amount, player, Bukkit.getOfflinePlayer(employee));
+                companyUtils.givePaycheck(company, amount, player, Bukkit.getOfflinePlayer(employee));
             });
 
         });
