@@ -77,8 +77,8 @@ public enum LangKey {
     COMPANY_DESCRIPTION("&aCompany Description: &6%description%"),
     YOUR_GROUP("&aYour Group: &6%group%"),
     PERMISSIONS("&aPermissions:"),
-    YES("Si"),
-    NO("No"),
+    YES_WORD("Yes"),
+    NO_WORD("No"),
     CAN_WITHDRAW("&aCan Withdraw: &6%can_withdraw%"),
     CAN_DEPOSIT("&aCan Deposit: &6%can_deposit%"),
     CAN_HIRE("&aCan Hire: &6%can_hire%"),
@@ -142,7 +142,8 @@ public enum LangKey {
     TRANSFER_OWNERSHIP_NEWOWNER("&aYou are now the owner of Company &6%company%&a."),
     GIVE_PAYCHECK_MENU("Give Paycheck to %player%"),
     SELECT_PLAYER_PAYCHECK("Select a player for the paycheck."),
-    EDIT_PERMS_MENU("Edit %group% group");
+    EDIT_PERMS_MENU("Edit %group% group"),
+    NO_PLAYERS_FOUND("&cNo players found for this query.");
     private final String defaultValue;
 
 }

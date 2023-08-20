@@ -83,8 +83,8 @@ public class GroupSelectorMenu {
 
         itemMeta.setDisplayName(ChatColor.GOLD + group.getTag());
 
-        String yesString = Language.getString(LangKey.YES, false);
-        String noString = Language.getString(LangKey.NO, false);
+        String yesString = Language.getString(LangKey.YES_WORD, false);
+        String noString = Language.getString(LangKey.NO_WORD, false);
 
         List<String> lore = new ArrayList<>();
 

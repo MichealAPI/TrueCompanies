@@ -35,7 +35,7 @@ public class ConfirmMenu {
 
         InventoryGui inventoryGui = new InventoryGui(instance, title, setup);
 
-        inventoryGui.setFiller(ItemStackUtil.getFiller(Material.GRAY_STAINED_GLASS_PANE));
+        inventoryGui.setFiller(ItemStackUtil.getFillerFromMaterial(Material.GRAY_STAINED_GLASS_PANE));
 
         StaticGuiElement confirmElement = new CustomizableGuiElement(menuConfiguration).create('a', inventoryName, "confirm");
         StaticGuiElement cancelElement = new CustomizableGuiElement(menuConfiguration).create('b', inventoryName, "cancel");

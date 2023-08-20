@@ -5,10 +5,11 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
+import co.aikar.commands.annotation.Subcommand;
 import it.mikeslab.truecompanies.util.format.ChatColor;
 import org.bukkit.entity.Player;
 
-@CommandAlias("azienda")
+@CommandAlias("company")
 public class CompanyCommand extends BaseCommand {
 
     @Default
@@ -18,7 +19,7 @@ public class CompanyCommand extends BaseCommand {
     }
 
     @HelpCommand
-    @CommandAlias("help")
+    @Subcommand("help")
     public void onHelpCommand(CommandHelp commandHelp) {
         commandHelp.showHelp();
     }

@@ -60,6 +60,16 @@ public final class TrueCompanies extends JavaPlugin {
         Language.generateFile(inventoryLangFile, "inventories.yml");
 
         this.menuConfiguration = YamlConfiguration.loadConfiguration(inventoryLangFile);
+
+        // Example company configuration
+        if(this.getConfig().getBoolean("create-default-company-config")) {
+            saveResource("companies" + File.separator + "example-company.yml", false);
+
+            this.getConfig().set("create-default-company-config", false);
+            this.saveConfig();
+        }
+
+
     }
 
     private void loadListeners() {

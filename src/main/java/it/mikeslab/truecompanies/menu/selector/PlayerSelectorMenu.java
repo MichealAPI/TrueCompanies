@@ -53,6 +53,13 @@ public class PlayerSelectorMenu {
             InventoryGui gui = new InventoryGui(instance, title, setup);
 
             GuiElementGroup group = new GuiElementGroup('a');
+
+            if(queriedPlayers.isEmpty()) {
+                target.sendMessage(Language.getString(LangKey.NO_PLAYERS_FOUND, true));
+
+                return CompletableFuture.completedFuture(null);
+            }
+
                 for (Map.Entry<String, Integer> entry : queriedPlayers.entrySet()) {
                     StaticGuiElement element = generatePlayerAssociatedElement(entry.getKey(), optionalCompany, exemptEmployees);
 
