@@ -33,7 +33,8 @@ Features
 
 Community contributions are the lifeblood of open-source projects. We welcome any and all feedback, enhancements, or bug reports. Please use the GitHub issues feature for bug reports and feature requests. Before contributing code, check out our contribution guidelines.
 
-For additional support or queries, reach out to us at dev@mikeslab.it or at discord.mikeslab.it
-License
+For additional support or queries, reach out to us at dev@mikeslab.it or at https://discord.mikeslab.it
+
+## License
 
 This project is licensed under the **MIT License** with the additional clause that credit must be given to the original author upon distribution or when forking. The source cannot be used for impropriation purposes.
