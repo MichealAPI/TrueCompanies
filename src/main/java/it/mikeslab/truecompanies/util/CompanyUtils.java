@@ -8,7 +8,6 @@ import it.mikeslab.truecompanies.object.Group;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -70,7 +69,7 @@ public class CompanyUtils {
         executeCommands(commands, username);
 
         LangKey key = (action == ActionType.HIRE) ? LangKey.HIRED_TITLE : LangKey.FIRED_TITLE;
-        String title = StringUtils.capitalize(Language.getString(key, true));
+        String title = Language.capitalize(Language.getString(key, true));
         String subTitle = company.getDisplayName() + (group != null ? " | " + group.getTag() : "");
 
         sendTitle(username, subTitle, title);
@@ -101,7 +100,7 @@ public class CompanyUtils {
         int oldRank = company.getEmployees().get(employeeUsername);
         Group oldGroup = company.getGroups().get(oldRank);
 
-        boolean isPromotion = oldGroup.getId() < newGroupID;
+        boolean isPromotion = oldGroup.getId() > newGroupID;
 
         Group group = company.getGroups().get(newGroupID);
 
@@ -116,11 +115,11 @@ public class CompanyUtils {
         subTitle = oldGroup.getTag() + " > " + group.getTag();
 
         if(isPromotion) {
-            title = StringUtils.capitalize(Language.getString(LangKey.PROMOTED_TITLE, true));
+            title = Language.capitalize(Language.getString(LangKey.PROMOTED_TITLE, true));
 
             this.sendTitle(employeeUsername, subTitle, title);
         } else {
-            title = StringUtils.capitalize(Language.getString(LangKey.DEMOTED_TITLE, true));
+            title = Language.capitalize(Language.getString(LangKey.DEMOTED_TITLE, true));
 
             this.sendTitle(employeeUsername, subTitle, title);
         }

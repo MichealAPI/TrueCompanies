@@ -1,6 +1,5 @@
 prefix: "&#0078FF&lTrueCompanies &8» &r"
-perms-click-to-enable: "&aClicca per abilitare &7(&6%perm%&7)"
-perms-click-to-disable: "&cClicca per disabilitare &7(&6%perm%&7)"
+perms-click-to-toggle: "Clicca per attivare/disattivare &7(&6%perm%&7)"
 error-updating-perms: "&cSi è verificato un errore durante l'aggiornamento dei permessi."
 perms-updated: "&aPermessi aggiornati con successo."
 next-page: "&aPagina successiva"

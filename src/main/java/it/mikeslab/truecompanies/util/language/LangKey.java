@@ -61,8 +61,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum LangKey {
     PREFIX("&c&lTrueCompanies &8» &r"),
-    PERMS_CLICK_TO_ENABLE("&aClick to Enable &7(&6%perm%&7)"),
-    PERMS_CLICK_TO_DISABLE("&cClick to Disable &7(&6%perm%&7)"),
+    PERMS_CLICK_TO_TOGGLE("Click to Toggle &7(&6%perm%&7)"),
     ERROR_UPDATING_PERMS("&cAn error occurred while updating permissions."),
     PERMS_UPDATED("&aPermissions updated successfully."),
     NEXT_PAGE("&aNext Page"),

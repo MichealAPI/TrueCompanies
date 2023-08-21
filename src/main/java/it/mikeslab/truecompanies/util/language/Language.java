@@ -18,8 +18,6 @@
 
 package it.mikeslab.truecompanies.util.language;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import it.mikeslab.truecompanies.util.format.ChatColor;
 import lombok.Getter;
@@ -29,6 +27,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -47,7 +46,7 @@ public class Language {
     private static FileConfiguration languageFile;
     private static File dataFolder;
     private static JavaPlugin plugin;
-    private static Cache<LangKey, String> cache;
+    private static Map<LangKey, String> cache;
 
     /**
      * Initializes the languages file management system.
@@ -62,9 +61,7 @@ public class Language {
         Language.plugin = plugin;
 
         // Initialize the cache with a maximum size of 1000 entries.
-        cache = Caffeine.newBuilder()
-                .maximumSize(1000)
-                .build();
+        cache = new HashMap<>();
 
         // Generate languages files for recognized languages if they don't exist, and load the specified languages.
         generate();
@@ -84,10 +81,10 @@ public class Language {
     public static String getString(LangKey langKey, boolean withPrefix) {
         try {
             // Try to get the languages string from the cache. If it's not there, load it from the languages file and add it to the cache.
-            String value = cache.get(langKey, key -> loadString(langKey));
+            String value = cache.getOrDefault(langKey, loadString(langKey));
 
             if(withPrefix) {
-                String prefix = cache.get(LangKey.PREFIX, key -> loadString(LangKey.PREFIX));
+                String prefix = cache.getOrDefault(LangKey.PREFIX, loadString(LangKey.PREFIX));
                 return ChatColor.color(prefix + value);
             }
 
@@ -121,10 +118,19 @@ public class Language {
         if (!languageFile.contains(parsedKey)) {
             Bukkit.getLogger().warning("Missing languages key: " + parsedKey);
         }
+        String result = languageFile.getString(parsedKey, langKey.getDefaultValue());
+
+        // Adding to cache
+        cache.put(langKey, result);
 
         // Return the languages string for the specified key, or the default value if it's not found.
-        return languageFile.getString(parsedKey, langKey.getDefaultValue());
+        return languageFile.getString(parsedKey, result);
     }
+
+    public static String capitalize(String string) {
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
+
 
     /**
      * Closes the access to the languages file.

@@ -14,6 +14,7 @@ import it.mikeslab.truecompanies.object.Group;
 import it.mikeslab.truecompanies.util.error.SentryDiagnostic;
 import it.mikeslab.truecompanies.util.language.LangKey;
 import it.mikeslab.truecompanies.util.language.Language;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -58,8 +59,7 @@ public class CompanyPermsInventory {
 
                 ItemStack enabledItem = new ItemStack(Material.LIME_WOOL);
                 ItemStack disabledItem = new ItemStack(Material.RED_WOOL);
-                String enabledDesc = Language.getString(LangKey.PERMS_CLICK_TO_ENABLE, false, Map.of("%perm%", perm.getName()));
-                String disabledDesc = Language.getString(LangKey.PERMS_CLICK_TO_DISABLE, false, Map.of("%perm%", perm.getName()));
+                String toggleString = Language.getString(LangKey.PERMS_CLICK_TO_TOGGLE, false, Map.of("%perm%", perm.getName()));
 
 
                 GuiStateElement guiStateElement = new GuiStateElement(
@@ -70,7 +70,7 @@ public class CompanyPermsInventory {
                                 },
                                 perm.getName().toLowerCase() + "-true",
                                 enabledItem,
-                                enabledDesc
+                                ChatColor.GREEN + toggleString
                         ),
                         new GuiStateElement.State(
                                 change -> {
@@ -78,7 +78,7 @@ public class CompanyPermsInventory {
                                 },
                                 perm.getName().toLowerCase() + "-false",
                                 disabledItem,
-                                disabledDesc
+                                ChatColor.RED + toggleString
                         )
                 );
 
