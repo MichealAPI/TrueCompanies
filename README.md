@@ -33,7 +33,7 @@ Features
 
 Community contributions are the lifeblood of open-source projects. We welcome any and all feedback, enhancements, or bug reports. Please use the GitHub issues feature for bug reports and feature requests. Before contributing code, check out our contribution guidelines.
 
-For additional support or queries, reach out to us at dev@mikeslab.it or at https://discord.mikeslab.it
+For additional support or queries, reach out to us at dev@mikeslab.it or at https://discord.gg/2x5M3pTm5t
 
 ## License
 
