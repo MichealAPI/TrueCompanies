@@ -1,10 +1,7 @@
 package it.mikeslab.truecompanies.command.subcommand;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.Optional;
-import co.aikar.commands.annotation.Subcommand;
-import co.aikar.commands.annotation.Syntax;
+import co.aikar.commands.annotation.*;
 import it.mikeslab.truecompanies.TrueCompanies;
 import it.mikeslab.truecompanies.listener.ChatListener;
 import it.mikeslab.truecompanies.loader.CompanyLoader;
@@ -18,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-@CommandAlias("company")
+@CommandAlias("chat|c")
 public class SubCompanyChat extends BaseCommand {
 
 
@@ -31,7 +28,8 @@ public class SubCompanyChat extends BaseCommand {
         inChat = new HashMap<>();
     }
 
-    @Subcommand("chat")
+    //@Subcommand("chat")
+    @Default
     @Syntax("<companyID>")
     public void onChatCommand(Player player, String companyID, @Optional String... text) {
 

@@ -1,0 +1,46 @@
+displayName: Example Company
+description: Best Company in the World
+balance: 5000
+chatFormat: '&7[&6{group}&7] &r{name}&7: &r{message}'
+commands:
+  on-fire:
+    - "say %player% %player% has been fired!"
+
+groups:
+  '1':
+    tag: 'Owner'
+    permissions:
+      can-hire: true
+      can-fire: true
+      can-deposit: true
+      can-withdraw: true
+      can-promote: true
+      can-demote: true
+      can-give-paychecks: true
+    commands:
+      on-promote:
+        - "say %player% %player% is now a manager!"
+      on-demote:
+        - "say %player% %player% is now a manager!"
+      on-hire:
+        - "say %player% %player% is now the owner!"
+  '2':
+    tag: 'Manager'
+    permissions:
+      can-hire: false
+      can-fire: true
+      can-deposit: true
+      can-withdraw: false
+      can-promote: true
+      can-demote: true
+      can-give-paychecks: true
+    commands:
+      on-promote:
+        - "say %player% %player% is now a manager!"
+      on-demote:
+        - "say %player% %player% is now a manager!"
+      on-hire:
+        - "say %player% %player% is now a manager!"
+data:
+  'Drago903':
+    group: 1

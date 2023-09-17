@@ -45,7 +45,11 @@ public class SubCompanyManage extends BaseCommand {
     }
 
     private void selectEmployeeToManage(Player player, Company company) {
-        new PlayerSelectorMenu(instance).show(player, Language.getString(LangKey.SELECT_A_PLAYER_MANAGE, false), Optional.of(company), Optional.of(false)).thenAccept(selectedEmployee -> {
+        new PlayerSelectorMenu(instance).show(
+                player,
+                Language.getString(LangKey.SELECT_A_PLAYER_MANAGE, false),
+                Optional.of(company), Optional.of(false)
+        ).thenAccept(selectedEmployee -> {
             if (selectedEmployee == null) {
                 player.closeInventory();
                 return;
@@ -74,7 +78,7 @@ public class SubCompanyManage extends BaseCommand {
 
             boolean isPromotion = currentGroup.getId() > group.getId();
 
-            if (isPromotion && !employerGroup.canPromote || !isPromotion && !employerGroup.canDemote) {
+            if ((isPromotion && !employerGroup.canPromote) || (!isPromotion && !employerGroup.canDemote)) {
                 sendPermissionError(player, isPromotion);
                 return;
             }

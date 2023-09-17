@@ -6,6 +6,8 @@ import it.mikeslab.truecompanies.command.subcommand.SubCompanyChat;
 import it.mikeslab.truecompanies.object.Company;
 import it.mikeslab.truecompanies.object.Group;
 import it.mikeslab.truecompanies.util.format.ChatColor;
+import it.mikeslab.truecompanies.util.language.LangKey;
+import it.mikeslab.truecompanies.util.language.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,7 +34,7 @@ public class ChatListener implements Listener {
 
         int subjectGroupID = company.getEmployees().getOrDefault(playerName, -1);
 
-        if(subjectGroupID == -1) { // Player is not an employee of the company
+        if(subjectGroupID == -1 && !event.getPlayer().hasPermission(Perms.SPY_CHAT)) { // Player is not an employee of the company
             SubCompanyChat.getInChat().remove(playerName);
             return;
         }
@@ -46,11 +48,21 @@ public class ChatListener implements Listener {
 
 
     public static void sendChatMessage(Company company, Player player, Group group, String message) {
+
         String baseFormat = company.getChatFormat();
+        boolean hasSpyPermission = player.hasPermission(Perms.SPY_CHAT);
+
         baseFormat = baseFormat
                 .replace("{name}", player.getName())
-                .replace("{group}", group.getTag())
-                .replace("{message}", message);
+                .replace("{message}", message)
+                .replace("{group}",
+                        hasSpyPermission
+                                ?
+                                Language.getString(LangKey.STAFF_PREFIX, false)
+                                :
+                                group.getTag());
+
+
 
 
         for(Player onlinePlayer : Bukkit.getOnlinePlayers()) {

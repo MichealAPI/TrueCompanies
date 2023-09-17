@@ -74,7 +74,6 @@ public class PlayerSelectorMenu {
 
                 gui.addElement(group);
 
-
                 // infoBook
                 gui.addElement(new CustomizableGuiElement(menuConfiguration).create('b', inventoryID, "info-book"));
 

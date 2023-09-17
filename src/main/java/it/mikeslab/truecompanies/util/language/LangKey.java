@@ -142,7 +142,9 @@ public enum LangKey {
     GIVE_PAYCHECK_MENU("Give Paycheck to %player%"),
     SELECT_PLAYER_PAYCHECK("Select a player for the paycheck."),
     EDIT_PERMS_MENU("Edit %group% group"),
-    NO_PLAYERS_FOUND("&cNo players found for this query.");
+    NO_PLAYERS_FOUND("&cNo players found for this query."),
+    STAFF_PREFIX("&3&lSTAFF");
+
     private final String defaultValue;
 
 }
