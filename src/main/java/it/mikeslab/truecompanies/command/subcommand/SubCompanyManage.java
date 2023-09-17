@@ -62,7 +62,6 @@ public class SubCompanyManage extends BaseCommand {
     private void manageSelectedEmployee(Player player, Company company, String selectedEmployee) {
 
         new GroupSelectorMenu(instance).show(player, company).thenAccept(group -> {
-            Group employerGroup = getGroup(company, player.getName());
             Group currentGroup = getGroup(company, selectedEmployee);
 
             if (group == null) {
@@ -78,7 +77,7 @@ public class SubCompanyManage extends BaseCommand {
 
             boolean isPromotion = currentGroup.getId() > group.getId();
 
-            if ((isPromotion && !employerGroup.canPromote) || (!isPromotion && !employerGroup.canDemote)) {
+            if (!hasPermsTo(group, isPromotion)) {
                 sendPermissionError(player, isPromotion);
                 return;
             }
@@ -117,4 +116,13 @@ public class SubCompanyManage extends BaseCommand {
             )));
         }
     }
+
+    private boolean hasPermsTo(Group group, boolean isPromotion) {
+
+        boolean hasPermsToDemote = group.canDemote && !isPromotion;
+        boolean hasPermsToPromote = group.canPromote && isPromotion;
+
+        return isPromotion ? hasPermsToPromote : hasPermsToDemote;
+    }
+
 }
